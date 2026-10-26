@@ -29,6 +29,7 @@ class Varasto:
             self.saldo = self.tilavuus
 
     def ota_varastosta(self, maara):
+            # virheellinen, palautetaan nolla
         if maara < 0:
             return 0.0
         if maara > self.saldo:
