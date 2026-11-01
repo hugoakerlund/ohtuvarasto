@@ -74,6 +74,6 @@ class TestVarasto(unittest.TestCase):
     def test_varasto_tulostuu_merkkijonona(self):
         self.varasto.lisaa_varastoon(8)
         oikea_tulostus = "saldo = 8, vielä tilaa 2"
-        tulostus = self.varasto.__str__()
+        tulostus = str(self.varasto)
 
         self.assertAlmostEqual(tulostus, oikea_tulostus)
