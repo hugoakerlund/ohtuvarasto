@@ -20,6 +20,8 @@ jobs:
         run: uv run coverage run --branch -m pytest
       - name: Coverage report
         run: uv run coverage xml
+      - name: Pylint report
+        run: uv run pylint src
       - name: Coverage report to Codecov
         uses: codecov/codecov-action@v5
         env:
