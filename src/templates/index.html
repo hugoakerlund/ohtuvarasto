@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Warehouse manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="page">
+        <header class="page-header">
+            <p class="eyebrow">INVENTORY CONTROL</p>
+            <h1>Warehouse manager</h1>
+            <p class="subtitle">Keep track of capacity and stock in one place.</p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="messages" aria-live="polite">
+                    {% for category, message in messages %}
+                        <p class="message {{ category }}">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <section class="panel create-panel" aria-labelledby="create-title">
+            <div>
+                <p class="eyebrow">GET STARTED</p>
+                <h2 id="create-title">Create a warehouse</h2>
+                <p class="muted">Set a name and maximum capacity.</p>
+            </div>
+            <form class="create-form" action="{{ url_for('create_warehouse') }}" method="post">
+                <label>
+                    Warehouse name
+                    <input type="text" name="name" placeholder="e.g. North depot" required>
+                </label>
+                <label>
+                    Capacity
+                    <input type="number" name="capacity" min="0.01" step="any" placeholder="100" required>
+                </label>
+                <button type="submit">Create warehouse</button>
+            </form>
+        </section>
+
+        <section class="warehouse-section" aria-labelledby="warehouses-title">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">YOUR LOCATIONS</p>
+                    <h2 id="warehouses-title">Warehouses</h2>
+                </div>
+                <span class="count">{{ varastot|length }} total</span>
+            </div>
+
+            {% if varastot %}
+                <div class="warehouse-list">
+                    {% for warehouse in varastot %}
+                        {% set available = warehouse.paljonko_mahtuu() %}
+                        {% set percentage = (warehouse.saldo / warehouse.tilavuus * 100)|round|int %}
+                        <article class="warehouse-card">
+                            <div class="warehouse-topline">
+                                <div>
+                                    <h3>{{ warehouse.nimi }}</h3>
+                                    <p class="muted">{{ warehouse.saldo|round(2) }} in stock · {{ available|round(2) }} available</p>
+                                </div>
+                                <p class="capacity"><strong>{{ warehouse.tilavuus|round(2) }}</strong><span> total capacity</span></p>
+                            </div>
+                            <div class="capacity-track" role="img" aria-label="{{ percentage }}% full">
+                                <div class="capacity-fill" style="width: {{ percentage }}%"></div>
+                            </div>
+                            <div class="stock-actions">
+                                <form action="{{ url_for('add_items', varasto_id=loop.index0) }}" method="post">
+                                    <label for="add-{{ loop.index0 }}">Add items</label>
+                                    <div class="input-action">
+                                        <input id="add-{{ loop.index0 }}" type="number" name="quantity" min="0.01" step="any" placeholder="Quantity" required>
+                                        <button type="submit">Add</button>
+                                    </div>
+                                </form>
+                                <form action="{{ url_for('take_items', varasto_id=loop.index0) }}" method="post">
+                                    <label for="take-{{ loop.index0 }}">Take items</label>
+                                    <div class="input-action">
+                                        <input id="take-{{ loop.index0 }}" type="number" name="quantity" min="0.01" step="any" placeholder="Quantity" required>
+                                        <button class="secondary-button" type="submit">Take</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon" aria-hidden="true">＋</div>
+                    <h3>No warehouses yet</h3>
+                    <p class="muted">Create your first warehouse above to start managing stock.</p>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>
