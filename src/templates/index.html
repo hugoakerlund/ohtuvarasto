@@ -49,12 +49,12 @@
                     <p class="eyebrow">YOUR LOCATIONS</p>
                     <h2 id="warehouses-title">Warehouses</h2>
                 </div>
-                <span class="count">{{ warehouses|length }} total</span>
+                <span class="count">{{ varastot|length }} total</span>
             </div>
 
-            {% if warehouses %}
+            {% if varastot %}
                 <div class="warehouse-list">
-                    {% for warehouse in warehouses %}
+                    {% for warehouse in varastot %}
                         {% set available = warehouse.paljonko_mahtuu() %}
                         {% set percentage = (warehouse.saldo / warehouse.tilavuus * 100)|round|int %}
                         <article class="warehouse-card">
@@ -69,14 +69,14 @@
                                 <div class="capacity-fill" style="width: {{ percentage }}%"></div>
                             </div>
                             <div class="stock-actions">
-                                <form action="{{ url_for('add_items', warehouse_id=loop.index0) }}" method="post">
+                                <form action="{{ url_for('add_items', varasto_id=loop.index0) }}" method="post">
                                     <label for="add-{{ loop.index0 }}">Add items</label>
                                     <div class="input-action">
                                         <input id="add-{{ loop.index0 }}" type="number" name="quantity" min="0.01" step="any" placeholder="Quantity" required>
                                         <button type="submit">Add</button>
                                     </div>
                                 </form>
-                                <form action="{{ url_for('take_items', warehouse_id=loop.index0) }}" method="post">
+                                <form action="{{ url_for('take_items', varasto_id=loop.index0) }}" method="post">
                                     <label for="take-{{ loop.index0 }}">Take items</label>
                                     <div class="input-action">
                                         <input id="take-{{ loop.index0 }}" type="number" name="quantity" min="0.01" step="any" placeholder="Quantity" required>
